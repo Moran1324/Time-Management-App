@@ -1,15 +1,16 @@
 const express = require('express');
+const logger = require('./helpers/logger');
 
 const app = express();
 
 app.use(express.json());
-//  app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('build'));
 
+app.use(logger);
+
 // get endpoint
-app.get('/api', (req, res, next) => {
-  // don't forget: catch((error) => next(error));
-});
+app.use('/api', require('./api'));
 
 /// ERRORS SECTION
 
