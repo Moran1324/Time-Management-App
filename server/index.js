@@ -3,6 +3,8 @@ require('dotenv').config();
 const chalk = require('chalk');
 const app = require('./app');
 
+const httpSocket = require('./socket');
+
 const PORT = process.env.PORT || 8080;
 const URL = process.env.MY_URL || 'http://localhost';
 const ENV = process.env.NODE_ENV || 'development';
@@ -11,3 +13,5 @@ app.listen(PORT, () => {
   console.log(chalk.blueBright(`Server listening at ${URL}:${PORT}`));
   console.log(chalk.blueBright(`Environment: ${ENV}`));
 });
+
+httpSocket.listen(8081, () => console.log('socket is listening...'));

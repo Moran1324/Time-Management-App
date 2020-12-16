@@ -1,9 +1,10 @@
 import React from 'react';
 import './App.css';
-import Recorder from './Recorder'
-import Home from './ts/index'
-import ReactRecorder from './ReactRecorder'
-import NativeRecorder from './NativeRecorder'
+import Recorder from './Recorder';
+import Home from './ts/index';
+import ReactRecorder from './ReactRecorder';
+import NativeRecorder from './NativeRecorder';
+import RecordSound from './components/RecordSound';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
       <ReactRecorder />
       <h1>separate</h1>
       <NativeRecorder />
+      <h1>separate below is true one</h1>
+      <RecordSound />
     </div>
   );
 }

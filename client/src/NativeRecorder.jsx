@@ -1,53 +1,83 @@
-import React, { useState, useEffect } from 'react'
-import { getTranscript } from './api/network'
+import React, { useState, useEffect } from 'react';
+import { getTranscript } from './api/network';
 
 export default function NativeRecorder() {
+  const [audio, setAudio] = useState({});
+  const [myMediaRecorder, setMyMediaRecorder] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcript, setTranscript] = useState('');
 
-  const [audio, setAudio] = useState({})
-  const [transcript, setTranscript] = useState('')
-
-  useEffect(() => {
-    if (audio) {
-      const getData = async () => {
-        // const base64audio = audio.toString('base64')
-        const { text } = await getTranscript(audio)
-        text && console.log('text: ', text)
-      }
-      getData()
-    } else return
-  }, [audio])
+  // useEffect(() => {
+  //   if (audio.length < 1) {
+  //     const getData = async () => {
+  //       console.log('useEffect')
+  //       // const base64audio = audio.toString('base64')
+  //       const { text } = await getTranscript(audio)
+  //       text && console.log('text: ', text)
+  //     }
+  //     getData()
+  //   } else return
+  // }, [audio])
 
   const handleAudio = () => {
-    navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-    .then(stream => {
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.start();
-  
-      const audioChunks = [];
-      mediaRecorder.addEventListener("dataavailable", event => {
-        audioChunks.push(event.data);
+    if (isRecording) return;
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then((stream) => {
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        setIsRecording(true);
+        console.log('rec started');
+
+        const audioChunks = [];
+        mediaRecorder.addEventListener('dataavailable', (event) => {
+          audioChunks.push(event.data);
+        });
+
+        mediaRecorder.addEventListener('stop', () => {
+          const recordAudio = () => {
+          // console.log('audio', audioChunks)
+          // const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
+          // console.log('blob', audioBlob)
+          // console.log('audioBlob: ', audioBlob)
+            const fileName = new Date().toISOString();
+            const formData = new FormData();
+            formData.append('audio_data', audioChunks[0], fileName);
+            console.log('formData: ', formData.toString());
+            // setAudio(formData)
+            // try {
+            //   const { text } = await getTranscript(audio)
+            //   text && console.log('text: ', text)
+            // } catch (err) {
+            //   console.log(err.message)
+            // }
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/transcript', true);
+            xhr.send(formData);
+            xhr.onload = function (e) {
+              console.log('transcript', e.target);
+            };
+          };
+          recordAudio();
+        });
+        setMyMediaRecorder(mediaRecorder);
       });
-  
-      mediaRecorder.addEventListener("stop", () => {
-        const audioBlob = new Blob(audioChunks, {type: 'audio'});
-        console.log('blob', audioBlob)
-        setAudio(audioBlob)
-      });
-  
-      setTimeout(() => {
-        mediaRecorder.stop();
-      }, 5000);
-    });
-  }
+  };
+
+  const handleStop = () => {
+    if (!isRecording) return;
+    myMediaRecorder.stop();
+    console.log('rec ended');
+    setIsRecording(false);
+  };
 
   return (
     <div>
       <button onClick={handleAudio}>Start</button>
-      {/* <button onClick={handleAudio.stop()}>Stop</button> */}
+      <button onClick={handleStop}>Stop</button>
       {/* <button onClick={resetTranscript}>Reset</button> */}
       {/* <p>transcription: {transcript}</p> */}
     </div>
-  )
+  );
 }
 
 /*

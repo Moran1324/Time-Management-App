@@ -1,9 +1,12 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2020": true,
+        "es6": true,
+        "jest": true
     },
     "extends": [
+        "eslint:recommended",
         "plugin:react/recommended",
         "airbnb"
     ],
@@ -11,14 +14,16 @@
         "ecmaFeatures": {
             "jsx": true
         },
-        "ecmaVersion": 12,
+        "ecmaVersion": 2020,
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+		"react",
+		"react-hooks"
     ],
     "rules": {
-        "linebreak-style": ["error", "windows"],
+        "react/react-in-jsx-scope": "off",
+        // "linebreak-style": ["error", "windows"],
         "no-console": ["warn", { "allow": ["warn", "error"] }]
     }
 }
