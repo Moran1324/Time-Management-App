@@ -5,16 +5,38 @@ import Recorder from '../helpers/Recorder';
 
 export default function useRecorder() {
   const [record, setRecord] = useState(null);
+  // audio stream, also for visualize
   const [audioStream, setAudioStream] = useState(null);
+  // audio formData for google STT
   const [audio, setAudio] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+  // audio object to play in browser
+  const [audioFile, setAudioFile] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
 
-  const handleExport = (buffer) => {
+  const handleTranscriptExport = (blob) => {
     // create FormData with Buffer
     const filename = new Date().toISOString();
     const formData = new FormData();
-    formData.append('audio_data', buffer, filename);
+    formData.append('audio_data', blob, filename);
     setAudio(formData);
+  };
+
+  const handleAudioExport = (blob) => {
+    const url = window.URL.createObjectURL(blob);
+    const tempAudioFile = new Audio(url);
+    console.log('newAudio: ', tempAudioFile);
+    setAudioFile(tempAudioFile);
+  };
+
+  const getAudioFromBuffer = (audioContext) => {
+    const rec = new Recorder(audioContext, { numChannels: 1 });
+    let tempAudio;
+    rec.exportWAV((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      tempAudio = new Audio(url);
+    });
+    return tempAudio;
   };
 
   const startRecording = () => {
@@ -24,6 +46,7 @@ export default function useRecorder() {
       .getUserMedia(constraints)
       .then((stream) => {
         setAudio(null);
+        setAudioFile(null);
         setIsRecording(true);
         const audioContext = new window.AudioContext();
         setAudioStream(stream);
@@ -39,15 +62,35 @@ export default function useRecorder() {
       });
   };
 
-  const StopRecording = async () => {
+  const stopRecording = () => {
     record.stop();
     // playSoundOut();
+    record.exportWAV((blob) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      let base64data;
+      reader.onloadend = function () {
+        base64data = reader.result;
+      };
+      setAudioBlob(base64data);
+      console.log('audioBlob: ', base64data);
+    });
     audioStream.getAudioTracks()[0].stop();
-    record.exportWAV(handleExport);
+
+    record.exportWAV(handleTranscriptExport);
+    record.exportWAV(handleAudioExport);
     setIsRecording(false);
   };
 
   return {
-    audio, isRecording, start: startRecording, stop: StopRecording,
+    audio,
+    isRecording,
+    start: startRecording,
+    stop: stopRecording,
+    audioFile,
+    handleAudioExport,
+    audioBlob,
+    audioStream,
+    getAudioFromBuffer,
   };
 }

@@ -1,0 +1,22 @@
+{
+  "name": "time-management-app",
+  "version": "1.0.0",
+  "description": "- All you have to do is \"npm install\" for both 'client' and 'server' directories, and you're Good to Go!",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm start",
+    "server": "cd server && npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moran1324/Time-Management-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Moran1324/Time-Management-App/issues"
+  },
+  "homepage": "https://github.com/Moran1324/Time-Management-App#readme"
+}

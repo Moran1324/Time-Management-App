@@ -1,5 +1,5 @@
-function user(endpoint, { body, ...customConfig } = {}) {
-  const headers = { 'Content-Type': 'application/json' };
+function user(endpoint, { body, ...customConfig } = {}, isFile = false) {
+  const headers = !isFile ? { 'Content-Type': 'application/json' } : {};
   const config = {
     method: body ? 'POST' : 'GET',
     ...customConfig,
@@ -9,10 +9,10 @@ function user(endpoint, { body, ...customConfig } = {}) {
     },
   };
   if (body) {
-    config.body = JSON.stringify(body);
+    config.body = isFile ? body : JSON.stringify(body);
   }
   let URL = endpoint;
-  if (endpoint[0] !== '/') {
+  if (URL[0] !== '/') {
     URL = '/'.concat(endpoint);
   }
 
@@ -27,4 +27,4 @@ function user(endpoint, { body, ...customConfig } = {}) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export { user };
+export default user;
