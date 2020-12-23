@@ -11,12 +11,14 @@ const LANGUAGES = {
   english: { name: 'English (United States)', code: 'en-US' },
 };
 
-module.exports = async (audioBuffer, language = 'hebrew') => {
+module.exports = async (audioBuffer, language) => {
+  let currentLanguage = language;
+  if (!language || language === 'null') currentLanguage = 'hebrew';
   const audio = {
     content: audioBuffer.toString('base64'),
   };
   const config = {
-    languageCode: LANGUAGES[language].code,
+    languageCode: LANGUAGES[currentLanguage].code,
 
   };
   const request = {
@@ -26,6 +28,7 @@ module.exports = async (audioBuffer, language = 'hebrew') => {
 
   try {
     const [response] = await client.recognize(request);
+    console.log(JSON.stringify(response, null, 2));
     const transcription = response.results
       .map((result) => result.alternatives[0].transcript)
       .join('\n');

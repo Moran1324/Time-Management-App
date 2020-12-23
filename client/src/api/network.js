@@ -4,6 +4,6 @@ export const postAudio = (audioBlob) => user('/audio', { body: audioBlob, method
 
 export const testAudio = () => user('/audio/test');
 
-export const getTranscript = (audioFile) => user('/transcript', { body: audioFile, method: 'POST' }, true);
+export const getTranscript = (audioFile, language = 'hebrew') => user(`/transcript?language=${language}`, { body: audioFile, method: 'POST' }, true);
 
 export default user;

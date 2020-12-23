@@ -20,7 +20,8 @@ function base64ToArrayBuffer(base64) {
 
 export default function RecordsSound() {
   const [transcript, setTranscript] = useState(null);
-  const [recording, setRecording] = useState(null);
+  const [fileName, setFileName] = useState(null);
+  // add a language state
 
   const {
     audio, isRecording, start, stop, audioFile, audioStream, audioBlob, getAudioFromBuffer,
@@ -29,24 +30,17 @@ export default function RecordsSound() {
   useEffect(() => {
     if (audio && !isRecording) {
       const getData = async () => {
+        // get transcription
         try {
           const { text } = await getTranscript(audio);
           setTranscript(text);
         } catch (err) {
           console.log('transcript error: ', err);
         }
+        // post audio and set audio src
         try {
-          const res = await testAudio();
-          // const result = res.data;
-          // const buffer = Buffer.from(result);
-          // const blob = new Blob(buffer, { type: 'audio/wav' });
-          // const url = window.URL.createObjectURL(blob);
-          // const tempAudioFile = new Audio(url);
-          // setRecording(tempAudioFile);
-
-          // console.log('newAudioElement: ', tempAudioFile);
-          // console.log('newAudioBlob: ', blob);
-          console.log('res: ', res);
+          await postAudio(audio);
+          setFileName('test2');
         } catch (err) {
           console.log('audio error: ', err);
         }
@@ -64,12 +58,6 @@ export default function RecordsSound() {
   // const handleSocketClick = () => {
   //   socket.emit('message', 'hello there');
   // };
-
-  const playRecording = () => {
-    if (recording) {
-      recording.play();
-    }
-  };
 
   const playAudio = () => {
     if (audioFile) {
@@ -119,14 +107,9 @@ export default function RecordsSound() {
           text="Play Audio"
         />
       ) : null}
-      {recording ? (
-        <MyButton
-          type="button"
-          onClick={playRecording}
-          text="Play Recording"
-        />
+      {fileName ? (
+        <audio src={`http://localhost:3001/api/audio/${fileName}`} controls />
       ) : null}
-      <audio src="http://localhost:3001/api/audio/test2" controls autoPlay />
 
     </div>
   );

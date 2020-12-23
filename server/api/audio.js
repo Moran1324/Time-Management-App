@@ -2,7 +2,6 @@ const { Router } = require('express');
 const fileUpload = require('express-fileupload');
 const { writeFile } = require('fs').promises;
 const path = require('path');
-const getAudio = require('../helpers/getAudio');
 
 const router = Router();
 
@@ -21,7 +20,7 @@ router.get('/:fileName', (req, res, next) => {
   const fileName = `${req.params.fileName}.wav`;
   res.sendFile(fileName, options, (err) => {
     if (err) {
-      next(err);
+      console.log(err);
     } else {
       console.log('Sent:', fileName);
     }
@@ -33,9 +32,7 @@ router.post('/', async (req, res) => {
   if (audioBuffer) {
     try {
       const result = await writeFile('sounds/test2.wav', audioBuffer);
-      const newBuffer = await getAudio('test2');
-      // res.status(201).json({ data: newBuffer });
-      res.sendFile(`${__dirname}/../sounds/test2.wav`);
+      res.status(201).json({ message: 'created' });
     } catch (err) {
       console.log('there was an error: ', err);
     }

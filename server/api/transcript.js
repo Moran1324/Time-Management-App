@@ -10,7 +10,7 @@ router.post('/', fileUpload(), async (req, res) => {
   const audio = req.files && req.files.audio_data.data;
   let language;
   if (typeof req.query.language === 'string') {
-    language = req.query;
+    language = req.query.language;
   }
   if (audio) {
     // console.log('got audio', audio);

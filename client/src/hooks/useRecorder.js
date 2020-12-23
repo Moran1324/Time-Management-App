@@ -9,7 +9,6 @@ export default function useRecorder() {
   const [audioStream, setAudioStream] = useState(null);
   // audio formData for google STT
   const [audio, setAudio] = useState(null);
-  const [audioBlob, setAudioBlob] = useState(null);
   // audio object to play in browser
   const [audioFile, setAudioFile] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -25,7 +24,6 @@ export default function useRecorder() {
   const handleAudioExport = (blob) => {
     const url = window.URL.createObjectURL(blob);
     const tempAudioFile = new Audio(url);
-    console.log('audioElement: ', tempAudioFile);
     setAudioFile(tempAudioFile);
   };
 
@@ -65,9 +63,6 @@ export default function useRecorder() {
   const stopRecording = () => {
     record.stop();
     // playSoundOut();
-    record.exportWAV((blob) => {
-      console.log('audioBlob: ', blob);
-    });
     audioStream.getAudioTracks()[0].stop();
 
     record.exportWAV(handleTranscriptExport);
@@ -82,7 +77,6 @@ export default function useRecorder() {
     stop: stopRecording,
     audioFile,
     handleAudioExport,
-    audioBlob,
     audioStream,
     getAudioFromBuffer,
   };
