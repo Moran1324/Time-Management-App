@@ -25,7 +25,7 @@ export default function useRecorder() {
   const handleAudioExport = (blob) => {
     const url = window.URL.createObjectURL(blob);
     const tempAudioFile = new Audio(url);
-    console.log('newAudio: ', tempAudioFile);
+    console.log('audioElement: ', tempAudioFile);
     setAudioFile(tempAudioFile);
   };
 
@@ -66,14 +66,7 @@ export default function useRecorder() {
     record.stop();
     // playSoundOut();
     record.exportWAV((blob) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      let base64data;
-      reader.onloadend = function () {
-        base64data = reader.result;
-      };
-      setAudioBlob(base64data);
-      console.log('audioBlob: ', base64data);
+      console.log('audioBlob: ', blob);
     });
     audioStream.getAudioTracks()[0].stop();
 

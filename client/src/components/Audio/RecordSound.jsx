@@ -8,26 +8,15 @@ import MyButton from '../wrappers/MyButton';
 
 // const socket = io.connect('http://localhost:8081');
 
-// function base64toBlob(base64Data, contentType) {
-//   contentType = contentType || '';
-//   const sliceSize = 1024;
-//   const byteCharacters = atob(base64Data);
-//   const bytesLength = byteCharacters.length;
-//   const slicesCount = Math.ceil(bytesLength / sliceSize);
-//   const byteArrays = new Array(slicesCount);
-
-//   for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-//     const begin = sliceIndex * sliceSize;
-//     const end = Math.min(begin + sliceSize, bytesLength);
-
-//     const bytes = new Array(end - begin);
-//     for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-//       bytes[i] = byteCharacters[offset].charCodeAt(0);
-//     }
-//     byteArrays[sliceIndex] = new Uint8Array(bytes);
-//   }
-//   return new Blob(byteArrays, { type: contentType });
-// }
+function base64ToArrayBuffer(base64) {
+  const binaryString = window.atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
 
 export default function RecordsSound() {
   const [transcript, setTranscript] = useState(null);
@@ -47,16 +36,17 @@ export default function RecordsSound() {
           console.log('transcript error: ', err);
         }
         try {
-          const res = await postAudio(audio);
-          const result = res.data;
-          const buffer = Buffer.from(result);
-          const blob = new Blob(new Uint8Array(buffer), { type: 'audio/wav' });
-          const url = window.URL.createObjectURL(blob);
-          const tempAudioFile = new Audio(url);
-          setRecording(tempAudioFile);
+          const res = await testAudio();
+          // const result = res.data;
+          // const buffer = Buffer.from(result);
+          // const blob = new Blob(buffer, { type: 'audio/wav' });
+          // const url = window.URL.createObjectURL(blob);
+          // const tempAudioFile = new Audio(url);
+          // setRecording(tempAudioFile);
 
-          console.log('audio: ', audio.get('audio_data'));
-          console.log('newAudioBlob: ', blob);
+          // console.log('newAudioElement: ', tempAudioFile);
+          // console.log('newAudioBlob: ', blob);
+          console.log('res: ', res);
         } catch (err) {
           console.log('audio error: ', err);
         }
@@ -136,6 +126,8 @@ export default function RecordsSound() {
           text="Play Recording"
         />
       ) : null}
+      <audio src="http://localhost:3001/api/audio/test2" controls autoPlay />
+
     </div>
   );
 }
