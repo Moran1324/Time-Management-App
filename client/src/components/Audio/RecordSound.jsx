@@ -49,7 +49,7 @@ export default function RecordsSound() {
         try {
           const res = await postAudio(audio);
           const result = res.data;
-          const buffer = AudioBuffer.from(result);
+          const buffer = Buffer.from(result);
           const blob = new Blob(new Uint8Array(buffer), { type: 'audio/wav' });
           const url = window.URL.createObjectURL(blob);
           const tempAudioFile = new Audio(url);
