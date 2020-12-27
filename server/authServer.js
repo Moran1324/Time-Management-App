@@ -1,5 +1,5 @@
 const express = require('express');
-const authErrorHandler = require('./helpers/authErrorHandler');
+const authErrorHandler = require('./helpers/auth/authErrorHandler');
 const logger = require('./helpers/logger');
 
 const app = express();

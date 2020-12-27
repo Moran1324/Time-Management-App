@@ -4,21 +4,25 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 const RefreshToken = require('../../models/RefreshToken');
-const authenticateToken = require('../../helpers/authenticateToken');
+const authenticateToken = require('../../helpers/auth/authenticateToken');
 const generateAccessToken = require('../../helpers/generateAccessToken');
+const handleMongoErrors = require('../../helpers/auth/mongoErrorHandler');
 
 const router = Router();
 
+// get all users
 router.get('/users', authenticateToken, async (req, res) => {
   const users = await User.find({});
   res.json(users);
 });
 
+// get personal user info
 router.get('/user', authenticateToken, async (req, res) => {
   const user = await User.findOne({ _id: req.user.id });
   res.json(user);
 });
 
+// register new user
 router.post('/register', async (req, res) => {
   try {
     const user = await User.create({
@@ -29,11 +33,12 @@ router.post('/register', async (req, res) => {
     });
     res.status(201).json({ user });
   } catch (err) {
-    console.log(err.message);
-    res.status(400).json({ message: 'email already registered' });
+    const errors = handleMongoErrors(err);
+    res.status(400).json({ errors });
   }
 });
 
+// login with existing user
 router.post('/login', async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -48,10 +53,12 @@ router.post('/login', async (req, res, next) => {
     await RefreshToken.create({ userId: userObj.id, token: refreshToken });
     res.json({ accessToken, refreshToken });
   } catch (err) {
-    next(err);
+    const errors = handleMongoErrors(err);
+    res.status(400).json({ errors });
   }
 });
 
+// generate new access token with refresh token
 router.post('/token', async (req, res) => {
   const refreshToken = req.body.token;
   if (!refreshToken) return res.status(401).json({ message: 'not allowed' });
@@ -64,6 +71,16 @@ router.post('/token', async (req, res) => {
     const accessToken = generateAccessToken(decoded.payload);
     res.json({ accessToken });
   });
+});
+
+router.post('/logout', async (req, res) => {
+  try {
+    await RefreshToken.deleteOne({ token: req.body.token });
+    res.sendStatus(204);
+  } catch (err) {
+    console.log(err.message);
+    res.status(400).json({ message: 'logout failed' });
+  }
 });
 
 module.exports = router;
