@@ -9,7 +9,7 @@ router.use(fileUpload());
 
 router.get('/:fileName', (req, res, next) => {
   const options = {
-    root: path.join(__dirname, '/../sounds'),
+    root: path.join(__dirname, '/../../sounds'),
     dotfiles: 'deny',
     headers: {
       'x-timestamp': Date.now(),

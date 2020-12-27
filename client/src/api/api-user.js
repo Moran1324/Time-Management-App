@@ -16,7 +16,7 @@ function user(endpoint, { body, ...customConfig } = {}, isFile = false) {
     URL = '/'.concat(endpoint);
   }
 
-  return fetch(`/api${URL}`, config)
+  return fetch(`/api/v1${URL}`, config)
     .then(async (response) => {
       const data = await response.json();
       if (response.ok) {

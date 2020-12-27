@@ -1,27 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { isMobile } from 'react-device-detect';
 // import io from 'socket.io-client';
 import useRecorder from '../../hooks/useRecorder';
 import { getTranscript, postAudio, testAudio } from '../../api/network';
 import AudioAnalyser from './AudioAnalyzer';
 import MyButton from '../wrappers/MyButton';
-
-// const socket = io.connect('http://localhost:8081');
-
-function base64ToArrayBuffer(base64) {
-  const binaryString = window.atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
+import MyAudio from '../wrappers/MyAudio';
 
 export default function RecordsSound() {
   const [transcript, setTranscript] = useState(null);
   const [fileName, setFileName] = useState(null);
   // add a language state
+
+  const audioRef = useRef();
 
   const {
     audio, isRecording, start, stop, audioFile, audioStream, audioBlob, getAudioFromBuffer,
@@ -49,19 +40,15 @@ export default function RecordsSound() {
     }
   }, [audio, isRecording]);
 
-  // useEffect(() => {
-  //   socket.on('message', (data) => {
-  //     console.log('data', data);
-  //   });
-  // }, [socket]);
-
-  // const handleSocketClick = () => {
-  //   socket.emit('message', 'hello there');
-  // };
-
   const playAudio = () => {
     if (audioFile) {
       audioFile.play();
+    }
+  };
+
+  const playAudioElement = () => {
+    if (fileName) {
+      audioRef.current.play();
     }
   };
 
@@ -108,7 +95,12 @@ export default function RecordsSound() {
         />
       ) : null}
       {fileName ? (
-        <audio src={`http://localhost:3001/api/audio/${fileName}`} controls />
+        <MyAudio
+          src={`http://localhost:3001/api/v1/audio/${fileName}`}
+          audioRef={audioRef}
+          onClick={playAudioElement}
+          buttonText="Play Audio Element"
+        />
       ) : null}
 
     </div>

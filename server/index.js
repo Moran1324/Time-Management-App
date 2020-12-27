@@ -2,10 +2,10 @@
 require('dotenv').config();
 const chalk = require('chalk');
 const app = require('./app');
+const authServer = require('./authServer');
 
-const httpSocket = require('./socket');
-
-const PORT = process.env.PORT || 8080;
+const PORT = +process.env.PORT || 8080;
+const AUTH_PORT = +PORT + 1;
 const URL = process.env.MY_URL || 'http://localhost';
 const ENV = process.env.NODE_ENV || 'development';
 
@@ -14,4 +14,6 @@ app.listen(PORT, () => {
   console.log(chalk.blueBright(`Environment: ${ENV}`));
 });
 
-httpSocket.listen(8081, () => console.log('socket is listening...'));
+authServer.listen(AUTH_PORT, () => {
+  console.log(chalk.cyanBright(`Auth server listening at ${URL}:${AUTH_PORT}`));
+});

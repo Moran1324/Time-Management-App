@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const fileUpload = require('express-fileupload');
-const speech2Text = require('../helpers/speech2Text');
+const speech2Text = require('../../helpers/speech2Text');
 
 // const upload = multer();
 

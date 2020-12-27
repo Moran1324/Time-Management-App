@@ -12,6 +12,9 @@
     },
     "rules": {
         // "linebreak-style": ["error", "windows"],
+        "no-param-reassign": "off",
+        "no-underscore-dangle": "off",
+        "consistent-return": "off",
         "no-console": ["warn", { "allow": ["warn", "error"] }]
     }
 }
