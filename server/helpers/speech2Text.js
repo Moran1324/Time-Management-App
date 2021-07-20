@@ -28,7 +28,6 @@ module.exports = async (audioBuffer, language) => {
 
   try {
     const [response] = await client.recognize(request);
-    console.log(JSON.stringify(response, null, 2));
     const transcription = response.results
       .map((result) => result.alternatives[0].transcript)
       .join('\n');

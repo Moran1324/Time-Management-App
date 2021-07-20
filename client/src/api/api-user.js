@@ -1,4 +1,7 @@
+import Cookies from 'js-cookie';
+
 function user(endpoint, { body, ...customConfig } = {}, isFile = false) {
+  const accessToken = Cookies.get('accessToken');
   const headers = !isFile ? { 'Content-Type': 'application/json' } : {};
   const config = {
     method: body ? 'POST' : 'GET',
@@ -6,6 +9,7 @@ function user(endpoint, { body, ...customConfig } = {}, isFile = false) {
     headers: {
       ...headers,
       ...customConfig,
+      Authorization: accessToken ? `Bearer ${accessToken}` : '',
     },
   };
   if (body) {
@@ -18,7 +22,12 @@ function user(endpoint, { body, ...customConfig } = {}, isFile = false) {
 
   return fetch(`/api/v1${URL}`, config)
     .then(async (response) => {
-      const data = await response.json();
+      let data;
+      if (response.statusText === 'No Content') {
+        data = await response.text();
+      } else {
+        data = await response.json();
+      }
       if (response.ok) {
         return data;
       }

@@ -16,7 +16,7 @@ router.post('/', fileUpload(), async (req, res) => {
     // console.log('got audio', audio);
     try {
       const transcript = await speech2Text(audio, language);
-      res.json({ text: transcript });
+      res.json({ text: transcript || 'no text' });
     } catch (err) {
       console.log('route error', err);
       res.json({ message: 'there was an error' });
